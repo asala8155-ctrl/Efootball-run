@@ -1,6 +1,8 @@
 {
-  "name": "ExitLag Mobile - eFootball Matchmaking & League Booster",
+  "name": "ExitLag Pro - eFootball League Booster",
   "description": "ExitLag & Gear UP Booster alternative engineered to fix eFootball Division League matchmaking, peer search, UDP tunneling, and NAT restrictions from Iran.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
