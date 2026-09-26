@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "ExitLag Pro - eFootball League Booster",
+  "short_name": "ExitLag eF",
+  "description": "ExitLag & Gear UP Booster alternative engineered to fix eFootball Division League matchmaking, peer search, UDP tunneling, and NAT restrictions from Iran.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#070a10",
+  "background_color": "#070a10",
+  "categories": ["games", "utilities"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -3,6 +3,8 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import path from 'path';
+import * as archiverModule from 'archiver';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -376,6 +378,58 @@ PersistentKeepalive = 15
     appType,
     config: configContent,
   });
+});
+
+// 6. Direct Full Project ZIP Download (برای دانلود مستقیم روی موبایل و گیت‌هاب)
+app.get('/api/download-zip', (req, res) => {
+  try {
+    const archive = new archiverModule.ZipArchive({ zlib: { level: 9 } });
+
+    res.attachment('exitlag-efootball-booster.zip');
+
+    archive.on('error', (err: any) => {
+      console.error('Archive error:', err);
+      res.status(500).send({ error: err.message });
+    });
+
+    archive.pipe(res);
+
+    const rootDir = process.cwd();
+
+    // Include root files
+    const rootFiles = [
+      'package.json',
+      'tsconfig.json',
+      'vite.config.ts',
+      'server.ts',
+      'index.html',
+      'metadata.json',
+      '.env.example',
+      '.gitignore',
+      'README.md',
+    ];
+
+    rootFiles.forEach((file) => {
+      const filePath = path.join(rootDir, file);
+      if (fs.existsSync(filePath)) {
+        archive.file(filePath, { name: file });
+      }
+    });
+
+    // Include directories (src, public)
+    const dirs = ['src', 'public'];
+    dirs.forEach((dir) => {
+      const dirPath = path.join(rootDir, dir);
+      if (fs.existsSync(dirPath)) {
+        archive.directory(dirPath, dir);
+      }
+    });
+
+    archive.finalize();
+  } catch (error: any) {
+    console.error('Download zip failed:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Setup Vite middleware in dev or static files in production
