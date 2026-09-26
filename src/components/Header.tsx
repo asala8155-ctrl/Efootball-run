@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Zap, Gamepad2, Volume2, VolumeX, Sparkles, Download } from 'lucide-react';
+import { ShieldCheck, Zap, Gamepad2, Volume2, VolumeX, Sparkles, Download, HardDrive } from 'lucide-react';
 
 interface HeaderProps {
   isBoosted: boolean;
@@ -7,6 +7,7 @@ interface HeaderProps {
   onToggleSound: () => void;
   onOpenAi: () => void;
   onOpenDownload: () => void;
+  onOpenDrive: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -15,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleSound,
   onOpenAi,
   onOpenDownload,
+  onOpenDrive,
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-[#0a0e17]/90 backdrop-blur-md px-3 sm:px-4 py-3">
@@ -56,6 +58,23 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Status Indicators & Action Buttons */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Google Drive Button */}
+          <button
+            onClick={onOpenDrive}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs font-bold transition-all cursor-pointer"
+            title="پشتیبان‌گیری در Google Drive"
+          >
+            <svg viewBox="0 0 87.3 78" className="w-3.5 h-3.5">
+              <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+              <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+              <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+              <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+              <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+              <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+            </svg>
+            <span className="hidden sm:inline">Google Drive</span>
+          </button>
+
           {/* Mobile Download & Install Button */}
           <button
             onClick={onOpenDownload}
@@ -63,13 +82,14 @@ export const Header: React.FC<HeaderProps> = ({
             title="دانلود یا نصب مستقیم روی موبایل"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>دانلود / نصب اپ</span>
+            <span className="hidden xs:inline">دانلود / نصب اپ</span>
+            <span className="xs:hidden">دانلود</span>
           </button>
 
           {/* AI Helper Quick Trigger */}
           <button
             onClick={onOpenAi}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-teal-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 text-xs transition-colors cursor-pointer"
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-teal-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 text-xs transition-colors cursor-pointer"
             title="تحلیل هوشمند با جمینای"
           >
             <Sparkles className="w-3.5 h-3.5 animate-pulse text-emerald-300" />
@@ -95,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Multi-Path Status */}
-          <div className={`hidden xs:flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-mono-code border ${
+          <div className={`hidden sm:flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-mono-code border ${
             isBoosted 
               ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' 
               : 'bg-slate-800/50 border-slate-700 text-slate-400'
@@ -108,3 +128,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+

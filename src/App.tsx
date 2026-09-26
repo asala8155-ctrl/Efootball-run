@@ -7,6 +7,7 @@ import { MatchSimulator } from './components/MatchSimulator';
 import { AiDiagnostician } from './components/AiDiagnostician';
 import { ConfigExporterModal } from './components/ConfigExporterModal';
 import { DownloadAppModal } from './components/DownloadAppModal';
+import { GoogleDriveModal } from './components/GoogleDriveModal';
 import { ServerNode } from './types';
 import { ShieldCheck, Zap, Globe, Sparkles, HelpCircle, Download, Smartphone, HardDriveDownload } from 'lucide-react';
 
@@ -89,6 +90,7 @@ export default function App() {
   const [configModalOpen, setConfigModalOpen] = useState<boolean>(false);
   const [configModalAppType, setConfigModalAppType] = useState<string>('singbox');
   const [downloadModalOpen, setDownloadModalOpen] = useState<boolean>(false);
+  const [driveModalOpen, setDriveModalOpen] = useState<boolean>(false);
 
   const [metrics, setMetrics] = useState({
     ping: 52,
@@ -263,6 +265,7 @@ export default function App() {
         onToggleSound={() => setSoundEnabled((prev) => !prev)}
         onOpenAi={scrollToAi}
         onOpenDownload={() => setDownloadModalOpen(true)}
+        onOpenDrive={() => setDriveModalOpen(true)}
       />
 
       {/* Main Container */}
@@ -340,12 +343,20 @@ export default function App() {
         onClose={() => setConfigModalOpen(false)}
         activeNode={activeNode}
         initialAppType={configModalAppType}
+        onOpenDrive={() => setDriveModalOpen(true)}
       />
 
       {/* Download & Mobile Install Modal */}
       <DownloadAppModal
         isOpen={downloadModalOpen}
         onClose={() => setDownloadModalOpen(false)}
+      />
+
+      {/* Google Drive Workspace Modal */}
+      <GoogleDriveModal
+        isOpen={driveModalOpen}
+        onClose={() => setDriveModalOpen(false)}
+        activeNode={activeNode}
       />
 
       {/* Footer */}
