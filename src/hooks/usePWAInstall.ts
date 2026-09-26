@@ -9,6 +9,8 @@ export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
+  const [isInAppBrowser, setIsInAppBrowser] = useState(false);
 
   useEffect(() => {
     // Check if running in standalone mode (already installed on phone)
@@ -17,10 +19,15 @@ export function usePWAInstall() {
       (window.navigator as unknown as { standalone?: boolean }).standalone === true;
     setIsInstalled(isStandalone);
 
-    // Detect iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIOSDevice = /iphone|ipad|ipod/.test(userAgent);
+    const isAndroidDevice = /android/.test(userAgent);
     setIsIOS(isIOSDevice);
+    setIsAndroid(isAndroidDevice);
+
+    // Detect if inside in-app browser like Telegram, Instagram, WhatsApp, etc.
+    const inApp = /telegram|fban|fbav|instagram|line|micromessenger|wv/.test(userAgent);
+    setIsInAppBrowser(inApp);
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
@@ -57,6 +64,8 @@ export function usePWAInstall() {
     isInstallable: !!deferredPrompt,
     isInstalled,
     isIOS,
+    isAndroid,
+    isInAppBrowser,
     install,
   };
 }

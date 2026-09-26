@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Zap, Gamepad2, Volume2, VolumeX, Sparkles, Download, HardDrive } from 'lucide-react';
+import { ShieldCheck, Zap, Gamepad2, Volume2, VolumeX, Sparkles, Download, HardDrive, Github } from 'lucide-react';
 
 interface HeaderProps {
   isBoosted: boolean;
@@ -8,6 +8,7 @@ interface HeaderProps {
   onOpenAi: () => void;
   onOpenDownload: () => void;
   onOpenDrive: () => void;
+  onOpenGitHub?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,6 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAi,
   onOpenDownload,
   onOpenDrive,
+  onOpenGitHub,
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-[#0a0e17]/90 backdrop-blur-md px-3 sm:px-4 py-3">
@@ -74,6 +76,18 @@ export const Header: React.FC<HeaderProps> = ({
             </svg>
             <span className="hidden sm:inline">Google Drive</span>
           </button>
+
+          {/* GitHub APK Builder Button */}
+          {onOpenGitHub && (
+            <button
+              onClick={onOpenGitHub}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all cursor-pointer"
+              title="ارسال به GitHub و ساخت APK"
+            >
+              <Github className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">GitHub APK</span>
+            </button>
+          )}
 
           {/* Mobile Download & Install Button */}
           <button

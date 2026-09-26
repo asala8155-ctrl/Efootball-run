@@ -432,6 +432,124 @@ app.get('/api/download-zip', (req, res) => {
   }
 });
 
+// 7. Direct Real Android APK File Download (.apk واقعی اندروید)
+app.get('/api/download-apk', (req, res) => {
+  try {
+    const apkPath = path.join(process.cwd(), 'public', 'ExitLag-eFootball-Booster.apk');
+    if (fs.existsSync(apkPath)) {
+      res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+      res.setHeader('Content-Disposition', 'attachment; filename="ExitLag-eFootball-Booster.apk"');
+      return res.sendFile(apkPath);
+    } else {
+      return res.status(404).json({ error: 'فایل APK هنوز تولید نشده است.' });
+    }
+  } catch (err: any) {
+    console.error('Download APK failed:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 8. One-Click Push to User's GitHub & Trigger Automated APK Build
+app.post('/api/github/deploy', async (req, res) => {
+  try {
+    const { token, repo, isPrivate = false } = req.body;
+    if (!token) {
+      return res.status(400).json({ error: 'لطفاً توکن شخصی گیت‌هاب (Personal Access Token) را وارد کنید.' });
+    }
+
+    const cleanToken = token.trim();
+    const repoName = (repo || 'exitlag-efootball-booster').trim().replace(/[^a-zA-Z0-9._-]/g, '-');
+
+    // 1. Verify token & get user info
+    const userRes = await fetch('https://api.github.com/user', {
+      headers: {
+        Authorization: `Bearer ${cleanToken}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'ExitLag-Applet-Deployer',
+      },
+    });
+
+    if (!userRes.ok) {
+      const err: any = await userRes.json().catch(() => ({}));
+      return res.status(401).json({ error: 'توکن گیت‌هاب نامعتبر است: ' + (err.message || 'خطای احراز هویت') });
+    }
+
+    const userData: any = await userRes.json();
+    const username = userData.login;
+
+    // 2. Check or create repository
+    const repoCheckRes = await fetch(`https://api.github.com/repos/${username}/${repoName}`, {
+      headers: {
+        Authorization: `Bearer ${cleanToken}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'ExitLag-Applet-Deployer',
+      },
+    });
+
+    if (repoCheckRes.status === 404) {
+      const createRes = await fetch('https://api.github.com/user/repos', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${cleanToken}`,
+          Accept: 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+          'User-Agent': 'ExitLag-Applet-Deployer',
+        },
+        body: JSON.stringify({
+          name: repoName,
+          description: 'ExitLag Mobile & eFootball Pro Booster with automated Android APK builder',
+          private: !!isPrivate,
+          auto_init: false,
+        }),
+      });
+
+      if (!createRes.ok) {
+        const err: any = await createRes.json().catch(() => ({}));
+        return res.status(400).json({ error: 'خطا در ایجاد مخزن در گیت‌هاب: ' + (err.message || '') });
+      }
+    }
+
+    // 3. Git commit & push
+    const rootDir = process.cwd();
+    const remoteUrl = `https://x-access-token:${cleanToken}@github.com/${username}/${repoName}.git`;
+
+    const { execSync } = await import('child_process');
+    try {
+      execSync('git init', { cwd: rootDir });
+      execSync('git config user.name "ExitLag Booster"', { cwd: rootDir });
+      execSync('git config user.email "bot@exitlag.local"', { cwd: rootDir });
+      execSync('git add -A', { cwd: rootDir });
+      try {
+        execSync('git commit -m "Deploy ExitLag eFootball Booster with automated Android APK build"', { cwd: rootDir });
+      } catch (e) {
+        // Already committed or nothing to commit
+      }
+      execSync('git branch -M main', { cwd: rootDir });
+      execSync(`git push "${remoteUrl}" main --force`, { cwd: rootDir, stdio: 'pipe' });
+    } catch (gitErr: any) {
+      console.error('Git push error:', gitErr);
+      return res.status(500).json({ error: 'خطا در ارسال پروژه به گیت‌هاب: ' + (gitErr.message || '') });
+    }
+
+    const repoUrl = `https://github.com/${username}/${repoName}`;
+    const actionsUrl = `https://github.com/${username}/${repoName}/actions`;
+    const releasesUrl = `https://github.com/${username}/${repoName}/releases`;
+
+    return res.json({
+      success: true,
+      username,
+      repo: repoName,
+      repoUrl,
+      actionsUrl,
+      releasesUrl,
+      message: 'پروژه با موفقیت روی اکانت گیت‌هاب شما قرار گرفت و فرایند خودکار ساخت فایل APK در GitHub Actions آغاز شد!',
+    });
+  } catch (err: any) {
+    console.error('GitHub deploy error:', err);
+    res.status(500).json({ error: err.message || 'خطا در اتصال به گیت‌هاب' });
+  }
+});
+
 // Setup Vite middleware in dev or static files in production
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {

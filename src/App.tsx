@@ -8,6 +8,8 @@ import { AiDiagnostician } from './components/AiDiagnostician';
 import { ConfigExporterModal } from './components/ConfigExporterModal';
 import { DownloadAppModal } from './components/DownloadAppModal';
 import { GoogleDriveModal } from './components/GoogleDriveModal';
+import { AndroidQuickInstallCard } from './components/AndroidQuickInstallCard';
+import { GitHubDeployModal } from './components/GitHubDeployModal';
 import { ServerNode } from './types';
 import { ShieldCheck, Zap, Globe, Sparkles, HelpCircle, Download, Smartphone, HardDriveDownload } from 'lucide-react';
 
@@ -91,6 +93,7 @@ export default function App() {
   const [configModalAppType, setConfigModalAppType] = useState<string>('singbox');
   const [downloadModalOpen, setDownloadModalOpen] = useState<boolean>(false);
   const [driveModalOpen, setDriveModalOpen] = useState<boolean>(false);
+  const [gitHubModalOpen, setGitHubModalOpen] = useState<boolean>(false);
 
   const [metrics, setMetrics] = useState({
     ping: 52,
@@ -266,37 +269,13 @@ export default function App() {
         onOpenAi={scrollToAi}
         onOpenDownload={() => setDownloadModalOpen(true)}
         onOpenDrive={() => setDriveModalOpen(true)}
+        onOpenGitHub={() => setGitHubModalOpen(true)}
       />
 
       {/* Main Container */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 space-y-6">
-        {/* Mobile Download & Installation Banner */}
-        <div className="rounded-2xl border border-emerald-500/40 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-950 p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg shadow-emerald-950/40">
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-400">
-              <Smartphone className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                <span>دانلود و نصب مستقیم روی موبایل (Android &amp; iOS)</span>
-                <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">PWA بومی</span>
-              </h4>
-              <p className="text-[11px] text-slate-300 mt-0.5">
-                با ۱ لمس برنامه را مانند اپلیکیشن مستقل روی گوشی نصب کنید یا کل سورس پروژه را با فرمت ZIP دانلود کنید.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <button
-              onClick={() => setDownloadModalOpen(true)}
-              className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>نصب / دانلود اپلیکیشن</span>
-            </button>
-          </div>
-        </div>
+        {/* Android Instant 1-Tap Installer Card */}
+        <AndroidQuickInstallCard onOpenGitHub={() => setGitHubModalOpen(true)} />
 
         {/* Core Booster HUD */}
         <BoosterHUD
@@ -357,6 +336,12 @@ export default function App() {
         isOpen={driveModalOpen}
         onClose={() => setDriveModalOpen(false)}
         activeNode={activeNode}
+      />
+
+      {/* GitHub 1-Click Deploy & APK Builder Modal */}
+      <GitHubDeployModal
+        isOpen={gitHubModalOpen}
+        onClose={() => setGitHubModalOpen(false)}
       />
 
       {/* Footer */}

@@ -22,7 +22,7 @@ interface DownloadAppModalProps {
 
 export const DownloadAppModal: React.FC<DownloadAppModalProps> = ({ isOpen, onClose }) => {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
-  const [activeTab, setActiveTab] = useState<'install' | 'zip' | 'github'>('install');
+  const [activeTab, setActiveTab] = useState<'apk' | 'install' | 'zip' | 'github'>('apk');
   const [copiedGit, setCopiedGit] = useState(false);
   const [copiedApkCmd, setCopiedApkCmd] = useState(false);
 
@@ -88,46 +88,105 @@ npx cap open android`;
         </div>
 
         {/* Tab Selection */}
-        <div className="flex items-center gap-1.5 p-3 bg-slate-900/80 border-b border-slate-800 text-xs font-bold">
+        <div className="flex items-center gap-1.5 p-3 bg-slate-900/80 border-b border-slate-800 text-xs font-bold overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('apk')}
+            className={`flex-1 min-w-[130px] flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'apk'
+                ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+            }`}
+          >
+            <Download className="w-4 h-4" />
+            <span>دانلود فایل APK</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('install')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl transition-all cursor-pointer ${
+            className={`flex-1 min-w-[130px] flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl transition-all cursor-pointer ${
               activeTab === 'install'
                 ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
             <Smartphone className="w-4 h-4" />
-            <span>نصب روی گوشی (توصیه اول)</span>
+            <span>نصب با WebAPK</span>
           </button>
 
           <button
             onClick={() => setActiveTab('zip')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl transition-all cursor-pointer ${
+            className={`flex-1 min-w-[110px] flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl transition-all cursor-pointer ${
               activeTab === 'zip'
                 ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
             <HardDriveDownload className="w-4 h-4" />
-            <span>دانلود ZIP کل سورس</span>
+            <span>دانلود ZIP</span>
           </button>
 
           <button
             onClick={() => setActiveTab('github')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl transition-all cursor-pointer ${
+            className={`flex-1 min-w-[90px] flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl transition-all cursor-pointer ${
               activeTab === 'github'
                 ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
             <Github className="w-4 h-4" />
-            <span>گیت‌هاب و ساخت APK</span>
+            <span>گیت‌هاب</span>
           </button>
         </div>
 
         {/* Modal Body */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+          {/* TAB 0: Direct Real APK Download */}
+          {activeTab === 'apk' && (
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-950 border border-emerald-500/40 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-emerald-500/50 flex items-center justify-center p-1.5">
+                    <img src="/icon.svg" alt="App Icon" className="w-full h-full object-contain" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white">ExitLag-eFootball-Booster.apk</h4>
+                    <p className="text-xs text-emerald-400">فایل رسمی نصبی اندروید (APK واقعی)</p>
+                  </div>
+                </div>
+
+                <a
+                  href="/api/download-apk"
+                  download="ExitLag-eFootball-Booster.apk"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition-all shadow-lg shadow-emerald-500/30 cursor-pointer animate-pulse"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>دانلود فایل APK</span>
+                </a>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3 text-xs text-slate-300">
+                <div className="font-bold text-white flex items-center gap-2">
+                  <Smartphone className="w-4 h-4 text-emerald-400" />
+                  <span>مراحل نصب پس از دانلود:</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-start gap-2.5">
+                    <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 text-center font-bold text-[11px] leading-5 shrink-0">1</span>
+                    <span>روی دکمه سبز رنگ <strong>«دانلود فایل APK»</strong> بزنید تا فایل مستقیماً روی گوشی دانلود شود.</span>
+                  </div>
+                  <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-start gap-2.5">
+                    <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 text-center font-bold text-[11px] leading-5 shrink-0">2</span>
+                    <span>در اعلانات بالای صفحه یا پوشه <strong>Downloads (دانلودها)</strong> گوشی روی فایل <strong>ExitLag-eFootball-Booster.apk</strong> بزنید.</span>
+                  </div>
+                  <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-start gap-2.5">
+                    <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 text-center font-bold text-[11px] leading-5 shrink-0">3</span>
+                    <span>دکمه <strong>Install (نصب)</strong> را لمس کنید تا برنامه روی گوشی شما نصب شود!</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* TAB 1: PWA Direct Install */}
           {activeTab === 'install' && (
             <div className="space-y-4">
